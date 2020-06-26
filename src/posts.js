@@ -1,5 +1,14 @@
 import * as React from 'react';
-import { List, Datagrid, TextField, ReferenceField, EditButton, Create, Edit, SimpleForm, ReferenceInput, SelectInput, TextInput } from 'react-admin';
+import { Filter, List, Datagrid, TextField, ReferenceField, EditButton, Create, Edit, SimpleForm, ReferenceInput, SelectInput, TextInput } from 'react-admin';
+
+const PostFilter = (props) => (
+    <Filter {...props}>
+        <TextInput label='Search' source='q' alwaysOn />
+        <ReferenceInput label='User' source='userId' reference='users' allowEmpty >
+            <SelectInput optionText='name' />
+        </ReferenceInput>
+    </Filter>
+);
 
 const PostTitle = ({ record }) => {
     return <span>Post {record ? `"${record.title}"` : ''}</span>;
@@ -28,7 +37,7 @@ export const PostEdit = props => (
 );
 
 export const PostList = props => (
-    <List {...props}>
+    <List filters={<PostFilter />} {...props}>
         <Datagrid rowClick="edit">
             <TextField source='id' />
             <ReferenceField source="userId" reference="users"><TextField source="name" /></ReferenceField>
