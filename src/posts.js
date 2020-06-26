@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Filter, List, Datagrid, TextField, ReferenceField, EditButton, Create, Edit, SimpleForm, ReferenceInput, SelectInput, TextInput } from 'react-admin';
+import { useMediaQuery } from '@material-ui/core';
+import { Filter, List, SimpleList, Datagrid, TextField, ReferenceField, EditButton, Create, Edit, SimpleForm, ReferenceInput, SelectInput, TextInput } from 'react-admin';
 
 const PostFilter = (props) => (
     <Filter {...props}>
@@ -17,7 +18,6 @@ const PostTitle = ({ record }) => {
 export const PostCreate = props => (
     <Create {...props}>
         <SimpleForm>
-            {/* <TextInput disabled source="id" /> */}
             <ReferenceInput source="userId" reference="users"><SelectInput optionText="name" /></ReferenceInput>
             <TextInput source="title" />
             <TextInput multiline source="body" />
@@ -36,14 +36,22 @@ export const PostEdit = props => (
     </Edit>
 );
 
-export const PostList = props => (
-    <List filters={<PostFilter />} {...props}>
-        <Datagrid rowClick="edit">
-            <TextField source='id' />
-            <ReferenceField source="userId" reference="users"><TextField source="name" /></ReferenceField>
-            <TextField source="title" />
-            <TextField source="body" />
-            <EditButton />
-        </Datagrid>
-    </List>
-);
+export const PostList = props => {
+    const isSmall = useMediaQuery(theme => theme.breakpoints.down('sm'));
+    return (
+        <List filters={<PostFilter />} {...props}>
+            {isSmall ? (<SimpleList
+                primaryText={record => record.title}
+                secondaryText={record => `${record.views} views`}
+                tertiaryText={record => new Date(record.published_at).toLocaleDateString()}
+            />) : (<Datagrid rowClick="edit">
+                <TextField source='id' />
+                <ReferenceField source="userId" reference="users"><TextField source="name" /></ReferenceField>
+                <TextField source="title" />
+                <TextField source="body" />
+                <EditButton />
+            </Datagrid>)}
+        </List>
+    );
+};
+
